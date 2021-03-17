@@ -27,31 +27,34 @@ function start_automated_okcupid_message_engine(){
 			compatibility : compatibility
 		});
 
-		//write message
-		//https://stackoverflow.com/questions/61107351/simulate-change-event-to-enter-text-into-react-textarea-with-vanilla-js-script
-		const textarea = document.querySelector('.prematch-intro-edit textarea.messenger-composer');
-
-		if(textarea){
-			var nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
-			nativeTextAreaValueSetter.call(textarea, the_message);
-			
-			//trigger change event
-			textarea.dispatchEvent(new Event('input', { bubbles: true}));
-			textarea.dispatchEvent(new Event('change'));
-		}
-		//document.querySelector(".prematch-intro-edit button.messenger-toolbar-send").removeAttribute('disabled');
-
 		setTimeout(function(){
-			//send message
-			if(document.querySelector(".prematch-intro-edit button.messenger-toolbar-send")){
-				document.querySelector(".prematch-intro-edit button.messenger-toolbar-send").click();				
-			}
+			//write message
+			//https://stackoverflow.com/questions/61107351/simulate-change-event-to-enter-text-into-react-textarea-with-vanilla-js-script
+			const textarea = document.querySelector('.prematch-intro-edit textarea.messenger-composer');
 
-			//close message modal
+			if(textarea){
+				var nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+				nativeTextAreaValueSetter.call(textarea, the_message);
+				
+				//trigger change event
+				textarea.dispatchEvent(new Event('input', { bubbles: true}));
+				textarea.dispatchEvent(new Event('change'));
+			}
+			//document.querySelector(".prematch-intro-edit button.messenger-toolbar-send").removeAttribute('disabled');
+
 			setTimeout(function(){
-				go_back_and_restart_okcupid_bot();
-			}, 800 + PICKUP_BOT_DELAY);
-		}, 1200 + PICKUP_BOT_DELAY);
+				//send message
+				if(document.querySelector(".prematch-intro-edit button.messenger-toolbar-send")){
+					document.querySelector(".prematch-intro-edit button.messenger-toolbar-send").click();				
+				}
+
+				//close message modal
+				setTimeout(function(){
+					go_back_and_restart_okcupid_bot();
+				}, 800 + PICKUP_BOT_DELAY);
+			}, 1200 + PICKUP_BOT_DELAY);
+
+		}, 800 + PICKUP_BOT_DELAY);
 	}, 2000 + PICKUP_BOT_DELAY);
 }
 
