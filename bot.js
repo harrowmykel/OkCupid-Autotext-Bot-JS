@@ -48,7 +48,7 @@ function start_automated_okcupid_message_engine(){
 				go_back_and_restart_okcupid_bot();
 			}, 800 + PICKUP_BOT_DELAY);
 		}, 1200 + PICKUP_BOT_DELAY);
-	}, 2000);
+	}, 2000 + PICKUP_BOT_DELAY);
 }
 
 function go_back_and_restart_okcupid_bot(){
@@ -70,6 +70,10 @@ function start_automated_okcupid_like(){
 		console.log("Last valid action is "+last_action_valid_action+". please restart bot with start_okcupid_bot(); ");
 		return;
 	}
+	//close message block if there is still one
+	if(document.querySelector(".prematch-intro-confirmation button.connection-view-container-close-button")){		
+		document.querySelector(".prematch-intro-confirmation button.connection-view-container-close-button").click();
+	}
 	last_action_valid_action = 'started_automated_okcupid_automated_like';
 	setTimeout(function(){
 		//go to profile
@@ -79,7 +83,7 @@ function start_automated_okcupid_like(){
 			last_action_valid_action = 'started_automated_okcupid_message_engine';
 			start_automated_okcupid_message_engine();
 		}, 3000 + PICKUP_BOT_DELAY);
-	}, 2000);
+	}, 2000 + PICKUP_BOT_DELAY);
 }
 
 function toggle_okcupid_force_stop(){
