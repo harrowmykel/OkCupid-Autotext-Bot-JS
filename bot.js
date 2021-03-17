@@ -58,11 +58,21 @@ function start_automated_okcupid_message_engine(){
 	}, 2000 + PICKUP_BOT_DELAY);
 }
 
+function close_okcupid_message_bot(){	
+	//close message block if there is still one
+	if(document.querySelector(".prematch-intro-confirmation button.connection-view-container-close-button")){	
+		var x = document.querySelectorAll(".prematch-intro-confirmation button.connection-view-container-close-button");
+		var i;
+		for (i = 0; i < x.length; i++) {
+		  x[i].click();
+		}
+	}
+}
+
 function go_back_and_restart_okcupid_bot(){
 	last_action_valid_action = 'go_back_and_restart_okcupid_bot';
-	if(document.querySelector(".prematch-intro-confirmation button.connection-view-container-close-button")){		
-		document.querySelector(".prematch-intro-confirmation button.connection-view-container-close-button").click();
-	}
+	
+	close_okcupid_message_bot();
 	//go back
 	setTimeout(function(){
 		last_action_valid_action = 'go_to_discovery_page';
@@ -72,14 +82,13 @@ function go_back_and_restart_okcupid_bot(){
 }
 
 function start_automated_okcupid_like(){
+	
+	close_okcupid_message_bot();
+	
 	if(force_stop_okcupid_bot){
 		console.log("Bot stopped! force_stop_okcupid_bot is true;");
 		console.log("Last valid action is "+last_action_valid_action+". please restart bot with start_okcupid_bot(); ");
 		return;
-	}
-	//close message block if there is still one
-	if(document.querySelector(".prematch-intro-confirmation button.connection-view-container-close-button")){		
-		document.querySelector(".prematch-intro-confirmation button.connection-view-container-close-button").click();
 	}
 	last_action_valid_action = 'started_automated_okcupid_automated_like';
 	setTimeout(function(){
