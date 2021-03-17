@@ -25,29 +25,30 @@ function start_automated_okcupid_message_engine(){
 
 		//write message
 		//https://stackoverflow.com/questions/61107351/simulate-change-event-to-enter-text-into-react-textarea-with-vanilla-js-script
-		const textarea = document.querySelector('.prematch-intro-edit textarea.messenger-composer')
+		const textarea = document.querySelector('.prematch-intro-edit textarea.messenger-composer');
 
-		var nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
-		nativeTextAreaValueSetter.call(textarea, the_message);
-		
-		//trigger change event
-		const event = new Event('input', { bubbles: true});
-		textarea.dispatchEvent(event);
-		
-		document.querySelector(".prematch-intro-edit textarea.messenger-composer").dispatchEvent(new Event('change'));
-		
+		if(textarea){
+			var nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+			nativeTextAreaValueSetter.call(textarea, the_message);
+			
+			//trigger change event
+			textarea.dispatchEvent(new Event('input', { bubbles: true}));
+			textarea.dispatchEvent(new Event('change'));
+		}
 		//document.querySelector(".prematch-intro-edit button.messenger-toolbar-send").removeAttribute('disabled');
 
 		setTimeout(function(){
 			//send message
-			document.querySelector(".prematch-intro-edit button.messenger-toolbar-send").click();
+			if(document.querySelector(".prematch-intro-edit button.messenger-toolbar-send")){
+				document.querySelector(".prematch-intro-edit button.messenger-toolbar-send").click();				
+			}
 
 			//close message modal
 			setTimeout(function(){
 				go_back_and_restart_okcupid_bot();
 			}, 800 + PICKUP_BOT_DELAY);
 		}, 1200 + PICKUP_BOT_DELAY);
-	}, 2000 + PICKUP_BOT_DELAY);
+	}, 2000);
 }
 
 function go_back_and_restart_okcupid_bot(){
@@ -67,6 +68,7 @@ function start_automated_okcupid_like(){
 	if(force_stop_okcupid_bot){
 		console.log("Bot stopped! force_stop_okcupid_bot is true;");
 		console.log("Last valid action is "+last_action_valid_action+". please restart bot with start_okcupid_bot(); ");
+		return;
 	}
 	last_action_valid_action = 'started_automated_okcupid_automated_like';
 	setTimeout(function(){
@@ -77,7 +79,7 @@ function start_automated_okcupid_like(){
 			last_action_valid_action = 'started_automated_okcupid_message_engine';
 			start_automated_okcupid_message_engine();
 		}, 3000 + PICKUP_BOT_DELAY);
-	}, 2000 + PICKUP_BOT_DELAY);
+	}, 2000);
 }
 
 function toggle_okcupid_force_stop(){
@@ -88,6 +90,7 @@ function start_okcupid_bot(){
 	try{
 		switch(last_action_valid_action){
 			case '':
+			case 'go_to_discovery_page':
 			case 'started_automated_okcupid_bot':
 			start_automated_okcupid_like();
 			break;
@@ -97,10 +100,7 @@ function start_okcupid_bot(){
 			case 'go_back_and_restart_okcupid_bot':
 			case 'send_message_to_user':
 			go_back_and_restart_okcupid_bot();
-			break;
-			case 'go_to_discovery_page':
-			start_okcupid_bot();
-			break;			
+			break;		
 		}
 	}catch(error){
 		//try again
@@ -120,14 +120,20 @@ function get_message_for_okcupid_bot(data={
 	data.compatibility = isNaN(data.compatibility) ? 0 : data.compatibility;
 
 	//randomly pick pickup line from list
-	var random_message = PICKUP_BOT_RANDOM_MESSAGES_LIST[Math.floor(Math.random() * PICKUP_BOT_RANDOM_MESSAGES_LIST.length)];
-	var the_message = 'Hi '+data.username+'. '+random_message+' 😅😅';
+	if((PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX + 1) < PICKUP_BOT_RANDOM_MESSAGES_LIST.length){
+		PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX++;
+	}else{
+		PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX = 0;
+	}
+
+	var random_message = PICKUP_BOT_RANDOM_MESSAGES_LIST[PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX];
+	var the_message = 'Hi '+data.username+'. '+random_message+' 🙈🙈';
 	switch(true){
 		case (data.username.toLowerCase() == 'alexa'):
 		the_message = 'Hey Alexa, how do I take you on a date next weekend? 🙈🙈.';
 		break;
 		case (data.compatibility > 85):
-		the_message = 'Wow '+data.username+', 😅😅 how are we '+data.compatibility+'% compatible and don\'t know each other yet?🙈🙈.';
+		the_message = 'Wow '+data.username+', 😅😅🙈 how are we '+data.compatibility+'% compatible and don\'t know each other yet?🙈🙈.';
 		break;
 	}
 	return the_message;
@@ -137,9 +143,9 @@ function get_message_for_okcupid_bot(data={
 //https://www.narcity.com/en-ca/life/60-pickup-lines-that-actually-work-on-tinder
 //https://manofmany.com/lifestyle/sex-dating/best-tinder-pick-up-lines-for-guys
 var PICKUP_BOT_RANDOM_MESSAGES_LIST = ['Are you a good cuddler? I might let you join my gang.', 
-	'Are you a bank loan? Because you have my interest!',
-	'You have a beautiful smile🙈🙈.',
-	'Is your name Wi-Fi? Because I\'m feeling a connection.',
+'Are you a bank loan? Because you have my interest!',
+'You have a beautiful smile🙈🙈.',
+'Is your name Wi-Fi? Because I\'m feeling a connection.',
 	// "I woke up thinking today was just another boring Monday, and then I saw your photo on my app.", 
 	"I woke up thinking today was just another boring "+((new Date()).toLocaleString("default", { weekday: "long" }))+", and then I saw your photo on my app.",
 	"Do you mind if I walk you home? My mother always told me to follow my dreams.", 
@@ -215,3 +221,6 @@ var PICKUP_BOT_RANDOM_MESSAGES_LIST = ['Are you a good cuddler? I might let you 
 	"Two truths and a lie! Go!", 
 	"You’re seriously cute, but here’s the dealbreaker: do you, or do you not eat marmite?", 
 	"Well, here I am. What are your other two wishes?"];
+
+//randomly pick pickup line index from list
+var PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX = Math.floor(Math.random() * PICKUP_BOT_RANDOM_MESSAGES_LIST.length);
