@@ -14,6 +14,10 @@ function start_automated_okcupid_message_engine(){
 	}
 	setTimeout(function(){
 		last_action_valid_action = 'send_message_to_user';
+		if(!document.querySelector(".profile-userinfo .profile-basics-username")){
+			go_back_and_restart_okcupid_bot();
+			return;
+		}
 		var the_user_name = document.querySelector(".profile-userinfo .profile-basics-username").innerText;
 		var compatibility = document.querySelector(".profile-content-main .profile-questions-userinfo-match").innerText;
 		compatibility = compatibility.replace('%', '');
