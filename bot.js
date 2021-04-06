@@ -96,7 +96,6 @@ function start_automated_okcupid_like(){
 	setTimeout(function(){
 		//go to profile
 		last_action_valid_action = 'visited_profile';
-		document.querySelector(".cardsummary .cardsummary-profile-link a").click();
 		var okc_user_id = document.querySelector(".cardsummary .cardsummary-profile-link a").getAttribute('href');
 		okc_user_id = (okc_user_id.split('?'))[0];
 		okc_user_id = (okc_user_id.split('profile/'))[1];
@@ -108,6 +107,8 @@ function start_automated_okcupid_like(){
 				start_automated_okcupid_like();
 			}, 1200);
 			return;
+		}else{			
+			document.querySelector(".cardsummary .cardsummary-profile-link a").click();
 		}
 
 		setTimeout(function(){
