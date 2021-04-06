@@ -102,7 +102,7 @@ function start_automated_okcupid_like(){
 
 		//check if we have messaged this user before and skip
 		if(last_checked_user_id == okc_user_id){
-			document.querySelector(".cardsummary .cardactions .likes-pill-button.doubletake-like-button").click();
+			document.querySelector(".cardactions .likes-pill-button.doubletake-like-button").click();
 			setTimeout(function(){
 				start_automated_okcupid_like();
 			}, 1200);
