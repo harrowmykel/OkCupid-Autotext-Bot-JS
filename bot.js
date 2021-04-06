@@ -3,6 +3,8 @@ var last_action_valid_action = 'started_automated_okcupid_bot';
 var force_stop_okcupid_bot = false;
 //for troubleshooting, if internet or computer is too slow
 var PICKUP_BOT_DELAY = 1000;
+var last_checked_user_id = 0;
+var okc_bot_use_random_message = false;
 
 function start_automated_okcupid_message_engine(){
 	//like user
@@ -64,7 +66,7 @@ function close_okcupid_message_bot(){
 		var x = document.querySelectorAll(".prematch-intro-confirmation button.connection-view-container-close-button");
 		var i;
 		for (i = 0; i < x.length; i++) {
-		  x[i].click();
+			x[i].click();
 		}
 	}
 }
@@ -95,7 +97,21 @@ function start_automated_okcupid_like(){
 		//go to profile
 		last_action_valid_action = 'visited_profile';
 		document.querySelector(".cardsummary .cardsummary-profile-link a").click();
+		var okc_user_id = document.querySelector(".cardsummary .cardsummary-profile-link a").getAttribute('href');
+		okc_user_id = (okc_user_id.split('?'))[0];
+		okc_user_id = (okc_user_id.split('profile/'))[1];
+
+		//check if we have messaged this user before and skip
+		if(last_checked_user_id == okc_user_id){
+			document.querySelector(".cardsummary .cardactions .likes-pill-button.doubletake-like-button").click();
+			setTimeout(function(){
+				start_automated_okcupid_like();
+			}, 1200);
+			return;
+		}
+
 		setTimeout(function(){
+			last_checked_user_id = okc_user_id;
 			last_action_valid_action = 'started_automated_okcupid_message_engine';
 			start_automated_okcupid_message_engine();
 		}, 3000 + PICKUP_BOT_DELAY);
@@ -147,14 +163,18 @@ function get_message_for_okcupid_bot(data={
 	}
 
 	var random_message = PICKUP_BOT_RANDOM_MESSAGES_LIST[PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX];
-	var the_message = 'Hi '+data.username+'. '+random_message+' 🙈🙈';
-	switch(true){
-		case (data.username.toLowerCase() == 'alexa'):
-		the_message = 'Hey Alexa, how do I take you on a date next weekend? 🙈🙈.';
-		break;
-		case (data.compatibility > 85):
-		the_message = 'Wow '+data.username+', 😅😅🙈 how are we '+data.compatibility+'% compatible and don\'t know each other yet?🙈🙈.';
-		break;
+
+	var the_message = 'Hi '+data.username+'. deine Bilder sind mir positiv aufgefallen, deine Naturschönheit kommt extrem zur Geltung und dein Lächeln sieht voll süß aus😊😊. Ich würde mich freuen, wenn man sich kennenlernen könnte.';
+	
+	if(okc_bot_use_random_message){
+		switch(true){
+			case (data.username.toLowerCase() == 'alexa'):
+			the_message = 'Hey Alexa, how do I take you on a date next weekend? 🙈🙈.';
+			break;
+			case (data.compatibility > 85):
+			the_message = 'Wow '+data.username+', 😅😅🙈 how are we '+data.compatibility+'% compatible and don\'t know each other yet?🙈🙈.';
+			break;
+		}		
 	}
 	return the_message;
 }
@@ -189,24 +209,24 @@ var PICKUP_BOT_RANDOM_MESSAGES_LIST = ['Are you a good cuddler? I might let you 
 	"Are you the square root of 1? Because you seriously can’t be real!", 
 	"Hello* pretends to be a waiter* – Here’s your icebreaker garnished with awkwardness.", 
 	"Favourite meal: Thai, Italian or French?", 
-	"We matched! Does that mean you’re coming over to my place tonight, or should we meet and establish we aren’t serial killers or living with our parents first?", 
-	"You’re so gorgeous that you made me forget my good pickup line.", 
-	"What’s your definition of a good weekend?", 
-	"If you’re as good at cuddling as you’re good looking, I’m signing myself up on the waitlist for a date.", 
-	"If I could rearrange the alphabet, I’d put U and I together.", 
-	"Titanic. That’s my icebreaker. What’s up?", 
-	"If you could be anywhere in the world, doing anything you like right now, where would you be and what would you do?", 
-	"You’re sweeter than 3.14. Tell me I just won the cheesy pickup line competition?", 
-	"Send me your favorite GIF so I get to know you better?", 
-	"A three-day weekend is coming up. Are you a) heading for the mountains b) going to the beach c) sleeping till noon d) partying all night?", 
-	"Favorite drink?", 
-	"Are you a bank loan? Because you have my interest.", 
-	"This is how I’d describe you in three emojis Now you describe yourself in three emojis.", 
-	"Top three best things to do on a Saturday?", 
-	"Not much of a bio, you mind if I lightening round you a couple questions", 
-	"If beauty were time, you’d be eternity", 
-	"Do you have a personality as attractive as your eyes?So, are you the kind I’d find climbing mountains and acing the diamond slopes, or chilling on the beach with a glass of wine?", 
-	"My mom told me not to talk to strangers online, but I’ll make an exception for you.", 
+//	"We matched! Does that mean you’re coming over to my place tonight, or should we meet and establish we aren’t serial killers or living with our parents first?", 
+"You’re so gorgeous that you made me forget my good pickup line.", 
+"What’s your definition of a good weekend?", 
+"If you’re as good at cuddling as you’re good looking, I’m signing myself up on the waitlist for a date.", 
+"If I could rearrange the alphabet, I’d put U and I together.", 
+"Titanic. That’s my icebreaker. What’s up?", 
+"If you could be anywhere in the world, doing anything you like right now, where would you be and what would you do?", 
+"You’re sweeter than 3.14. Tell me I just won the cheesy pickup line competition?", 
+"Send me your favorite GIF so I get to know you better?", 
+"A three-day weekend is coming up. Are you a) heading for the mountains b) going to the beach c) sleeping till noon d) partying all night?", 
+"Favorite drink?", 
+"Are you a bank loan? Because you have my interest.", 
+"This is how I’d describe you in three emojis Now you describe yourself in three emojis.", 
+"Top three best things to do on a Saturday?", 
+"Not much of a bio, you mind if I lightening round you a couple questions", 
+"If beauty were time, you’d be eternity", 
+"Do you have a personality as attractive as your eyes?So, are you the kind I’d find climbing mountains and acing the diamond slopes, or chilling on the beach with a glass of wine?", 
+	//"My mom told me not to talk to strangers online, but I’ll make an exception for you.", 
 	"You sound busy…any chance of adding me to your to-do list?", 
 	"So I’ve been trying to come up with a good psychology pickup line for you, but I’m aFreud I couldn’t come up with any.", 
 	"Truth or dare?", 
