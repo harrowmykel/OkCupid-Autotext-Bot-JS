@@ -5,6 +5,10 @@ var force_stop_okcupid_bot = false;
 var PICKUP_BOT_DELAY = 1000;
 var last_checked_user_id = 0;
 var okc_bot_use_random_message = false;
+var is_okcupid_intro = false;
+var okcupid_intro_pos = 0;
+var number_of_bot_messages_sent = 0;
+var okc_bot_can_restart = true;
 
 function start_automated_okcupid_message_engine(){
 	//like user
@@ -44,6 +48,8 @@ function start_automated_okcupid_message_engine(){
 			}
 			//document.querySelector(".prematch-intro-edit button.messenger-toolbar-send").removeAttribute('disabled');
 
+			number_of_bot_messages_sent++;
+			console.log("last Message sent to "+number_of_bot_messages_sent+". user - "+the_user_name+" at ", (new Date()));
 			setTimeout(function(){
 				//send message
 				if(document.querySelector(".prematch-intro-edit button.messenger-toolbar-send")){
@@ -79,12 +85,16 @@ function go_back_and_restart_okcupid_bot(){
 	setTimeout(function(){
 		last_action_valid_action = 'go_to_discovery_page';
 		window.history.back();
-		start_automated_okcupid_like();
+		if(is_okcupid_intro){
+			start_automated_okcupid_intro_for_liked_users();
+		}else{
+			start_automated_okcupid_like();
+		}
 	}, 800 + PICKUP_BOT_DELAY);
 }
 
 function start_automated_okcupid_like(){
-	
+	is_okcupid_intro = false;
 	close_okcupid_message_bot();
 	
 	if(force_stop_okcupid_bot){
@@ -95,8 +105,9 @@ function start_automated_okcupid_like(){
 	last_action_valid_action = 'started_automated_okcupid_automated_like';
 	setTimeout(function(){
 		//go to profile
+		var sel_item = document.querySelector(".cardsummary .cardsummary-profile-link a");
 		last_action_valid_action = 'visited_profile';
-		var okc_user_id = document.querySelector(".cardsummary .cardsummary-profile-link a").getAttribute('href');
+		var okc_user_id = sel_item.getAttribute('href');
 		okc_user_id = (okc_user_id.split('?'))[0];
 		okc_user_id = (okc_user_id.split('profile/'))[1];
 
@@ -108,7 +119,51 @@ function start_automated_okcupid_like(){
 			}, 1200);
 			return;
 		}else{			
-			document.querySelector(".cardsummary .cardsummary-profile-link a").click();
+			sel_item.click();
+		}
+
+		setTimeout(function(){
+			last_checked_user_id = okc_user_id;
+			last_action_valid_action = 'started_automated_okcupid_message_engine';
+			start_automated_okcupid_message_engine();
+		}, 3000 + PICKUP_BOT_DELAY);
+	}, 2000 + PICKUP_BOT_DELAY);
+}
+function start_automated_okcupid_intro_for_liked_users(){
+	is_okcupid_intro = true;
+	
+	close_okcupid_message_bot();
+	window.scrollTo(0,document.body.scrollHeight);
+	
+	if(force_stop_okcupid_bot){
+		console.log("Bot stopped! force_stop_okcupid_bot is true;");
+		console.log("Last valid action is "+last_action_valid_action+". please restart bot with start_okcupid_bot(); ");
+		return;
+	}
+	last_action_valid_action = 'started_automated_okcupid_automated_intro';
+	setTimeout(function(){
+		var sel_item = (document.getElementsByClassName("userrow-bucket-card-link-container"))[okcupid_intro_pos];
+		if(!sel_item && okc_bot_can_restart){
+			//if no more item, reload and restart bot
+			sessionStorage.setItem("force-restart-okc-bot", "true");
+			location.reload();
+			return;
+		}
+		//go to profile
+		last_action_valid_action = 'visited_profile';
+		var okc_user_id = sel_item.getAttribute('href');
+		okc_user_id = (okc_user_id.split('?'))[0];
+		okc_user_id = (okc_user_id.split('profile/'))[1];
+
+		//check if we have messaged this user before and skip
+		if(last_checked_user_id == okc_user_id){
+			okcupid_intro_pos++;
+			setTimeout(function(){
+				start_automated_okcupid_intro_for_liked_users();
+			}, 100);
+			return;
+		}else{			
+			sel_item.click();
 		}
 
 		setTimeout(function(){
@@ -180,6 +235,17 @@ function get_message_for_okcupid_bot(data={
 	return the_message;
 }
 
+
+window.onload = function() {
+	const reloading = sessionStorage.getItem("force-restart-okc-bot");
+	if (reloading) {
+		okc_bot_can_restart = false;
+		sessionStorage.removeItem("force-restart-okc-bot");
+		setTimeout(()=>{
+			start_automated_okcupid_intro_for_liked_users();
+		}, 1000);
+	}
+}
 
 //https://www.narcity.com/en-ca/life/60-pickup-lines-that-actually-work-on-tinder
 //https://manofmany.com/lifestyle/sex-dating/best-tinder-pick-up-lines-for-guys
