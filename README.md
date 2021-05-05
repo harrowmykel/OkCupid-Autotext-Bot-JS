@@ -12,7 +12,7 @@ a small javascript bot to automatically like and message users on okcupid
 `
 
 1b. paste it in the developer console of your browser
-or include via jsDelivr cdn with https://cdn.jsdelivr.net/gh/harrowmykel/OkCupid-Autotext-Bot-JS@main/ts/build/bot.js
+or include via jsDelivr cdn with https://cdn.jsdelivr.net/gh/harrowmykel/OkCupid-Autotext-Bot-JS@main/build/bot.js
 
 1c. Press enter
 
