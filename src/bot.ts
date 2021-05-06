@@ -12,8 +12,8 @@ let okc_bot_can_restart: boolean = true;
 let number_of_vegans: number = 0;
 
 
-async function okc_delay(ms: number) {
-    await new Promise(res => setTimeout(res, ms));
+function okc_delay(_function: Function, ms: number) {
+    setTimeout(_function, ms + PICKUP_BOT_DELAY);
 }
 
 function okc_log(...args: any[]) {
@@ -44,72 +44,76 @@ function okc_getAttribute(selector: string, attribute: string): string {
 }
 
 function okc_start_message_engine() {
-    okc_delay(2000 + PICKUP_BOT_DELAY);
+    okc_delay(() => {
 
-    last_action_valid_action = 'send_message_to_user';
-    if (!document.querySelector(".profile-userinfo .profile-basics-username")) {
-        go_back_and_restart_okcupid_bot();
-        return;
-    }
-
-    const the_user_name: string = okc_get_innerText(".profile-userinfo .profile-basics-username");
-    let compatibility: string = okc_get_innerText(".profile-content-main .profile-questions-userinfo-match");
-    compatibility = compatibility.replace('%', '');
-    const is_vegetarian: boolean = okc_get_innerText(".matchprofile-details-section.matchprofile-details-section--lifestyle").indexOf('Vegeta') > -1;
-    const is_vegan: boolean = okc_get_innerText(".matchprofile-details-section.matchprofile-details-section--lifestyle").indexOf('Vegan') > -1;
-    const is_asexual: boolean = okc_get_innerText(".matchprofile-details-section.matchprofile-details-section--basics").indexOf('Asexual') > -1;
-
-    if (is_vegan || is_asexual) {
-        //pass user
-        // if(document.querySelector("#main_content .pill-button.pass-pill-button")){	
-        // 	document.querySelector("#main_content .pill-button.pass-pill-button").click();
-        // }
-        number_of_vegans++;
-        okc_log(number_of_vegans + " Vegan User rejected : user - " + the_user_name + " #" + last_checked_user_id + " at ", (new Date()), 'https://www.okcupid.com/profile/' + last_checked_user_id + '?cf=quickmatch');
-        //close message modal
-        // setTimeout(function(){
-        // 	// go_back_and_restart_okcupid_bot(true)
-        // }, 5000 + PICKUP_BOT_DELAY);
-        // return;
-    }
-
-    //like user
-    okc_click("#main_content .pill-button.likes-pill-button");
-    okc_click("#main_content .pill-button.message-pill-button");
-
-    let the_message = get_message_for_okcupid_bot({
-        username: the_user_name,
-        compatibility: +compatibility
-    });
-
-    okc_delay(800 + PICKUP_BOT_DELAY);
-
-    //write message
-    //https://stackoverflow.com/questions/61107351/simulate-change-event-to-enter-text-into-react-textarea-with-vanilla-js-script
-    const textarea = document.querySelector('.prematch-intro-edit textarea.messenger-composer');
-
-    if (textarea) {
-        let nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")!.set!;
-        if (nativeTextAreaValueSetter != null) {
-            nativeTextAreaValueSetter.call(textarea, the_message);
+        last_action_valid_action = 'send_message_to_user';
+        if (!document.querySelector(".profile-userinfo .profile-basics-username")) {
+            go_back_and_restart_okcupid_bot();
+            return;
         }
 
-        //trigger change event
-        textarea.dispatchEvent(new Event('input', { bubbles: true }));
-        textarea.dispatchEvent(new Event('change'));
-    }
-    //document.querySelector(".prematch-intro-edit button.messenger-toolbar-send").removeAttribute('disabled');
+        const the_user_name: string = okc_get_innerText(".profile-userinfo .profile-basics-username");
+        let compatibility: string = okc_get_innerText(".profile-content-main .profile-questions-userinfo-match");
+        compatibility = compatibility.replace('%', '');
+        const is_vegetarian: boolean = okc_get_innerText(".matchprofile-details-section.matchprofile-details-section--lifestyle").indexOf('Vegeta') > -1;
+        const is_vegan: boolean = okc_get_innerText(".matchprofile-details-section.matchprofile-details-section--lifestyle").indexOf('Vegan') > -1;
+        const is_asexual: boolean = okc_get_innerText(".matchprofile-details-section.matchprofile-details-section--basics").indexOf('Asexual') > -1;
 
-    number_of_bot_messages_sent++;
-    okc_log("last Message sent to " + number_of_bot_messages_sent + ". user - " + the_user_name + " #" + last_checked_user_id + " at ", (new Date()), 'https://www.okcupid.com/profile/' + last_checked_user_id + '?cf=quickmatch');
+        if (is_vegan || is_asexual) {
+            //pass user
+            // if(document.querySelector("#main_content .pill-button.pass-pill-button")){	
+            // 	document.querySelector("#main_content .pill-button.pass-pill-button").click();
+            // }
+            number_of_vegans++;
+            okc_log(number_of_vegans + " Vegan User rejected : user - " + the_user_name + " #" + last_checked_user_id + " at ", (new Date()), 'https://www.okcupid.com/profile/' + last_checked_user_id + '?cf=quickmatch');
+            //close message modal
+            // setTimeout(function(){
+            // 	// go_back_and_restart_okcupid_bot(true)
+            // }, 5000 );
+            // return;
+        }
 
-    okc_delay(1200 + PICKUP_BOT_DELAY);
-    //send message
-    okc_click(".prematch-intro-edit button.messenger-toolbar-send");
+        //like user
+        okc_click("#main_content .pill-button.likes-pill-button");
+        okc_click("#main_content .pill-button.message-pill-button");
 
-    //close message modal
-    okc_delay(800 + PICKUP_BOT_DELAY);
-    go_back_and_restart_okcupid_bot();
+        let the_message = get_message_for_okcupid_bot({
+            username: the_user_name,
+            compatibility: +compatibility
+        });
+
+        okc_delay(() => {
+
+            //write message
+            //https://stackoverflow.com/questions/61107351/simulate-change-event-to-enter-text-into-react-textarea-with-vanilla-js-script
+            const textarea = document.querySelector('.prematch-intro-edit textarea.messenger-composer');
+
+            if (textarea) {
+                let nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")!.set!;
+                if (nativeTextAreaValueSetter != null) {
+                    nativeTextAreaValueSetter.call(textarea, the_message);
+                }
+
+                //trigger change event
+                textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                textarea.dispatchEvent(new Event('change'));
+            }
+            //document.querySelector(".prematch-intro-edit button.messenger-toolbar-send").removeAttribute('disabled');
+
+            number_of_bot_messages_sent++;
+            okc_log("last Message sent to " + number_of_bot_messages_sent + ". user - " + the_user_name + " #" + last_checked_user_id + " at ", (new Date()), 'https://www.okcupid.com/profile/' + last_checked_user_id + '?cf=quickmatch');
+
+            okc_delay(() => {
+                //send message
+                okc_click(".prematch-intro-edit button.messenger-toolbar-send");
+
+                //close message modal
+                okc_delay(() => {
+                    go_back_and_restart_okcupid_bot();
+                }, 800);
+            }, 1200);
+        }, 800);
+    }, 2000);
 }
 
 function close_okcupid_message_bot() {
@@ -127,17 +131,18 @@ function go_back_and_restart_okcupid_bot(force_go_back = true) {
 
     close_okcupid_message_bot();
     //go back
-    okc_delay(800 + PICKUP_BOT_DELAY);
-    last_action_valid_action = 'go_to_discovery_page';
-    window.history.back();
-    if (is_okcupid_intro) {
-        start_automated_okcupid_intro_for_liked_users();
-    } else {
-        start_automated_okcupid_like();
-    }
+    okc_delay(() => {
+        last_action_valid_action = 'go_to_discovery_page';
+        window.history.back();
+        if (is_okcupid_intro) {
+            start_automated_okcupid_intro_for_liked_users();
+        } else {
+            start_automated_okcupid_like();
+        }
+    }, 800);
 }
 
-function start_automated_okcupid_like() {
+async function start_automated_okcupid_like() {
     is_okcupid_intro = false;
     close_okcupid_message_bot();
 
@@ -147,33 +152,35 @@ function start_automated_okcupid_like() {
         return;
     }
     last_action_valid_action = 'started_automated_okcupid_automated_like';
-    okc_delay(2000 + PICKUP_BOT_DELAY);
-    //go to profile
-    // let sel_item = document.querySelector();
-    last_action_valid_action = 'visited_profile';
-    let okc_user_id_ = okc_getAttribute(".cardsummary .cardsummary-profile-link a", 'href');
-    okc_user_id_ = (okc_user_id_.split('?'))[0];
-    okc_user_id_ = (okc_user_id_.split('profile/'))[1];
-    const okc_user_id: number = +okc_user_id_;
+    okc_delay(() => {
+        //go to profile
+        // let sel_item = document.querySelector();
+        last_action_valid_action = 'visited_profile';
+        let okc_user_id_ = okc_getAttribute(".cardsummary .cardsummary-profile-link a", 'href');
+        okc_user_id_ = (okc_user_id_.split('?'))[0];
+        okc_user_id_ = (okc_user_id_.split('profile/'))[1];
+        const okc_user_id: number = +okc_user_id_;
 
-    //check if we have messaged this user before and skip
-    if (last_checked_user_id == okc_user_id) {
-        okc_click(".cardactions .likes-pill-button.doubletake-like-button");
-        setTimeout(function () {
-            start_automated_okcupid_like();
-        }, 1200);
-        return;
-    } else {
-        okc_click(".cardsummary .cardsummary-profile-link a");
-    }
+        //check if we have messaged this user before and skip
+        if (last_checked_user_id == okc_user_id) {
+            okc_click(".cardactions .likes-pill-button.doubletake-like-button");
+            setTimeout(function () {
+                start_automated_okcupid_like();
+            }, 1200);
+            return;
+        } else {
+            okc_click(".cardsummary .cardsummary-profile-link a");
+        }
 
-    okc_delay(3000 + PICKUP_BOT_DELAY);
-    last_checked_user_id = okc_user_id;
-    last_action_valid_action = 'started_automated_okcupid_message_engine';
-    okc_start_message_engine();
+        okc_delay(() => {
+            last_checked_user_id = okc_user_id;
+            last_action_valid_action = 'started_automated_okcupid_message_engine';
+            okc_start_message_engine();
+        }, 3000);
+    }, 2000);
 }
 
-function start_automated_okcupid_intro_for_liked_users() {
+async function start_automated_okcupid_intro_for_liked_users() {
     is_okcupid_intro = true;
 
     close_okcupid_message_bot();
@@ -185,35 +192,38 @@ function start_automated_okcupid_intro_for_liked_users() {
         return;
     }
     last_action_valid_action = 'started_automated_okcupid_automated_intro';
-    okc_delay(2000 + PICKUP_BOT_DELAY);
-    let sel_item = <HTMLElement>((document.getElementsByClassName("userrow-bucket-card-link-container"))[okcupid_intro_pos]);
-    if (!sel_item && okc_bot_can_restart) {
-        //if no more item, reload and restart bot
-        sessionStorage.setItem("force-restart-okc-bot", "true");
-        location.reload();
-        return;
-    }
-    //go to profile
-    last_action_valid_action = 'visited_profile';
-    let okc_user_id_ = sel_item.getAttribute('href')!;
-    okc_user_id_ = (okc_user_id_.split('?'))[0];
-    okc_user_id_ = (okc_user_id_.split('profile/'))[1];
-    const okc_user_id: number = +okc_user_id_;
+    okc_delay(() => {
+        let sel_item = <HTMLElement>((document.getElementsByClassName("userrow-bucket-card-link-container"))[okcupid_intro_pos]);
+        if (!sel_item && okc_bot_can_restart) {
+            //if no more item, reload and restart bot
+            sessionStorage.setItem("force-restart-okc-bot", "true");
+            location.reload();
+            return;
+        }
+        //go to profile
+        last_action_valid_action = 'visited_profile';
+        let okc_user_id_ = sel_item.getAttribute('href')!;
+        okc_user_id_ = (okc_user_id_.split('?'))[0];
+        okc_user_id_ = (okc_user_id_.split('profile/'))[1];
+        const okc_user_id: number = +okc_user_id_;
 
-    //check if we have messaged this user before and skip
-    if (last_checked_user_id == okc_user_id) {
-        okcupid_intro_pos++;
-        okc_delay(100 + PICKUP_BOT_DELAY);
-        start_automated_okcupid_intro_for_liked_users();
-        return;
-    } else {
-        sel_item.click();
-    }
+        //check if we have messaged this user before and skip
+        if (last_checked_user_id == okc_user_id) {
+            okcupid_intro_pos++;
+            okc_delay(() => {
+                start_automated_okcupid_intro_for_liked_users();
+            }, 100);
+            return;
+        } else {
+            sel_item.click();
+        }
 
-    okc_delay(3000 + PICKUP_BOT_DELAY);
-    last_checked_user_id = okc_user_id;
-    last_action_valid_action = 'started_automated_okcupid_message_engine';
-    okc_start_message_engine();
+        okc_delay(() => {
+            last_checked_user_id = okc_user_id;
+            last_action_valid_action = 'started_automated_okcupid_message_engine';
+            okc_start_message_engine();
+        }, 3000);
+    }, 2000);
 }
 
 function toggle_okcupid_force_stop() {
