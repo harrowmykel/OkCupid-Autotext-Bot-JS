@@ -194,6 +194,7 @@ async function start_automated_okcupid_intro_for_liked_users() {
     last_action_valid_action = 'started_automated_okcupid_automated_intro';
     okc_delay(() => {
         let sel_item = <HTMLElement>((document.getElementsByClassName("userrow-bucket-card-link-container"))[okcupid_intro_pos]);
+        sel_item = <HTMLElement>sel_item.querySelector('.usercard-thumb a');
         if (!sel_item && okc_bot_can_restart) {
             //if no more item, reload and restart bot
             sessionStorage.setItem("force-restart-okc-bot", "true");
