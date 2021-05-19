@@ -168,9 +168,18 @@ async function start_automated_okcupid_like() {
                 start_automated_okcupid_like();
             }, 1200);
             return;
-        } else {
-            okc_click(".cardsummary .cardsummary-profile-link a");
         }
+
+        const is_vegan: boolean = okc_get_innerText(".matchprofile-details-section.matchprofile-details-section--lifestyle").indexOf('Vegan') > -1;
+        if(is_vegan){
+            okc_click(".cardactions .pass-pill-button.doubletake-pass-button");
+            setTimeout(function () {
+                start_automated_okcupid_like();
+            }, 1200);
+            return;        	
+        }        
+
+        okc_click(".cardsummary .cardsummary-profile-link a");
 
         okc_delay(() => {
             last_checked_user_id = okc_user_id;
@@ -208,9 +217,9 @@ async function start_automated_okcupid_intro_for_liked_users() {
         okc_user_id_ = (okc_user_id_.split('profile/'))[1];
         const okc_user_id: number = +okc_user_id_;
 
+        okcupid_intro_pos++;
         //check if we have messaged this user before and skip
         if (last_checked_user_id == okc_user_id) {
-            okcupid_intro_pos++;
             okc_delay(() => {
                 start_automated_okcupid_intro_for_liked_users();
             }, 100);
@@ -273,6 +282,7 @@ function get_message_for_okcupid_bot(data = {
     let random_message = PICKUP_BOT_RANDOM_MESSAGES_LIST[PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX];
 
     let the_message = 'Hi ' + data.username + '. deine Bilder sind mir positiv aufgefallen, deine Naturschönheit kommt extrem zur Geltung und dein Lächeln sieht voll süß aus😊😊. Ich würde mich freuen, wenn man sich kennenlernen könnte.';
+    the_message = 'Hi ' + data.username + '. alles gut? Kann man sich kennenlernen?';
 
     if (okc_bot_use_random_message) {
         switch (true) {

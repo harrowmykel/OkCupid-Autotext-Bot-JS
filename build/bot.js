@@ -189,9 +189,15 @@ function start_automated_okcupid_like() {
                     }, 1200);
                     return;
                 }
-                else {
-                    okc_click(".cardsummary .cardsummary-profile-link a");
+                var is_vegan = okc_get_innerText(".matchprofile-details-section.matchprofile-details-section--lifestyle").indexOf('Vegan') > -1;
+                if (is_vegan) {
+                    okc_click(".cardactions .pass-pill-button.doubletake-pass-button");
+                    setTimeout(function () {
+                        start_automated_okcupid_like();
+                    }, 1200);
+                    return;
                 }
+                okc_click(".cardsummary .cardsummary-profile-link a");
                 okc_delay(function () {
                     last_checked_user_id = okc_user_id;
                     last_action_valid_action = 'started_automated_okcupid_message_engine';
@@ -229,9 +235,9 @@ function start_automated_okcupid_intro_for_liked_users() {
                 okc_user_id_ = (okc_user_id_.split('?'))[0];
                 okc_user_id_ = (okc_user_id_.split('profile/'))[1];
                 var okc_user_id = +okc_user_id_;
+                okcupid_intro_pos++;
                 //check if we have messaged this user before and skip
                 if (last_checked_user_id == okc_user_id) {
-                    okcupid_intro_pos++;
                     okc_delay(function () {
                         start_automated_okcupid_intro_for_liked_users();
                     }, 100);
@@ -293,6 +299,7 @@ function get_message_for_okcupid_bot(data) {
     }
     var random_message = PICKUP_BOT_RANDOM_MESSAGES_LIST[PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX];
     var the_message = 'Hi ' + data.username + '. deine Bilder sind mir positiv aufgefallen, deine Naturschönheit kommt extrem zur Geltung und dein Lächeln sieht voll süß aus😊😊. Ich würde mich freuen, wenn man sich kennenlernen könnte.';
+    the_message = 'Hi ' + data.username + '. alles gut? Kann man sich kennenlernen?';
     if (okc_bot_use_random_message) {
         switch (true) {
             case (data.username.toLowerCase() == 'alexa'):
