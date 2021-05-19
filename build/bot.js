@@ -189,8 +189,12 @@ function start_automated_okcupid_like() {
                     }, 1200);
                     return;
                 }
+                var user_name = okc_get_innerText('.cardsummary .cardsummary-item.cardsummary-realname');
                 var is_vegan = okc_get_innerText(".matchprofile-details-section.matchprofile-details-section--lifestyle").indexOf('Vegan') > -1;
-                if (is_vegan) {
+                var is_asexual = okc_get_innerText(".matchprofile-details-section.matchprofile-details-section--basics").indexOf('Asexual') > -1;
+                if (is_vegan || is_asexual) {
+                    number_of_vegans++;
+                    okc_log(number_of_vegans + " Vegan User rejected : user -" + user_name + " #" + okc_user_id + " at ", (new Date()), 'https://www.okcupid.com/profile/' + last_checked_user_id + '?cf=quickmatch');
                     okc_click(".cardactions .pass-pill-button.doubletake-pass-button");
                     setTimeout(function () {
                         start_automated_okcupid_like();
