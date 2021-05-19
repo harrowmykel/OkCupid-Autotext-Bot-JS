@@ -288,7 +288,7 @@ function get_message_for_okcupid_bot(data = {
 	let random_message = PICKUP_BOT_RANDOM_MESSAGES_LIST[PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX];
 
 	let the_message = 'Hi ' + data.username + '. deine Bilder sind mir positiv aufgefallen, deine Naturschönheit kommt extrem zur Geltung und dein Lächeln sieht voll süß aus😊😊. Ich würde mich freuen, wenn man sich kennenlernen könnte.';
-	the_message = 'Hi ' + data.username + '. alles gut? Kann man sich kennenlernen?';
+	the_message = 'Hi ' + data.username + '. alles gut? Dein Lächeln sieht voll süß aus😊 Kann man sich kennenlernen?';
 
 	if (okc_bot_use_random_message) {
 		switch (true) {
