@@ -118,8 +118,8 @@ function okc_start_message_engine() {
 
 function close_okcupid_message_bot() {
 	//close all message blocks if there is still one
-	if (document.querySelector(".prematch-intro-confirmation button.connection-view-container-close-button")) {
-		let x = document.querySelectorAll(".prematch-intro-confirmation button.connection-view-container-close-button");
+	if (document.querySelector("button.connection-view-container-close-button")) {
+		let x = document.querySelectorAll("button.connection-view-container-close-button");
 		for (let i = 0; i < x.length; i++) {
 			(<HTMLElement>x[i]).click();
 		}
