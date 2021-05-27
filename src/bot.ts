@@ -126,6 +126,26 @@ function close_okcupid_message_bot() {
 	}
 }
 
+function okc_is_base(){
+	const curr_url = window.location.href;
+	if(!curr_url){
+		return false;
+	}
+	const bases = [
+	'okcupid.com/home',
+	'okcupid.com/discover',
+	'okcupid.com/who-you-like',
+	'okcupid.com/who-likes-you',
+	];
+	let is_base = false;
+	bases.forEach((base)=>{
+		if(curr_url.toLowerCase().indexOf(base.toLowerCase()) > -1){
+			is_base = true;
+		}
+	});
+	return is_base;
+}
+
 function go_back_and_restart_okcupid_bot(force_go_back = true) {
 	last_action_valid_action = 'go_back_and_restart_okcupid_bot';
 
@@ -133,7 +153,9 @@ function go_back_and_restart_okcupid_bot(force_go_back = true) {
 	//go back
 	okc_delay(() => {
 		last_action_valid_action = 'go_to_discovery_page';
-		window.history.back();
+		if(!okc_is_base()){
+			window.history.back();
+		}
 		if (is_okcupid_intro) {
 			start_automated_okcupid_intro_for_liked_users();
 		} else {
