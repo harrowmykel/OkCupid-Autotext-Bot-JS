@@ -47,6 +47,13 @@ var okcupid_intro_pos = 0;
 var number_of_bot_messages_sent = 0;
 var okc_bot_can_restart = true;
 var number_of_vegans = 0;
+var OKCUserObject = /** @class */ (function () {
+    function OKCUserObject() {
+        this.username = '';
+        this.compatibility = 0;
+    }
+    return OKCUserObject;
+}());
 function okc_delay(_function, ms) {
     setTimeout(_function, ms + PICKUP_BOT_DELAY);
 }
@@ -187,7 +194,6 @@ function start_automated_okcupid_like() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             is_okcupid_intro = false;
-            close_okcupid_message_bot();
             if (force_stop_okcupid_bot) {
                 okc_log("Bot stopped! force_stop_okcupid_bot is true;");
                 okc_log("Last valid action is " + last_action_valid_action + ". please restart bot with start_okcupid_bot(); ");
@@ -195,6 +201,7 @@ function start_automated_okcupid_like() {
             }
             last_action_valid_action = 'started_automated_okcupid_automated_like';
             okc_delay(function () {
+                close_okcupid_message_bot();
                 //go to profile
                 // let sel_item = document.querySelector();
                 last_action_valid_action = 'visited_profile';
@@ -237,7 +244,6 @@ function start_automated_okcupid_intro_for_liked_users() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             is_okcupid_intro = true;
-            close_okcupid_message_bot();
             window.scrollTo(0, document.body.scrollHeight);
             if (force_stop_okcupid_bot) {
                 okc_log("Bot stopped! force_stop_okcupid_bot is true;");
@@ -246,6 +252,7 @@ function start_automated_okcupid_intro_for_liked_users() {
             }
             last_action_valid_action = 'started_automated_okcupid_automated_intro';
             okc_delay(function () {
+                close_okcupid_message_bot();
                 var sel_item = ((document.getElementsByClassName("userrow-bucket-card-link-container"))[okcupid_intro_pos]);
                 sel_item = sel_item.querySelector('.usercard-thumb a');
                 if (!sel_item && okc_bot_can_restart) {
@@ -308,23 +315,11 @@ function start_okcupid_bot() {
     }
 }
 function get_message_for_okcupid_bot(data) {
-    if (data === void 0) { data = {
-        username: '',
-        compatibility: 0
-    }; }
     data.username = data.username ? data.username.trim() : 'Unknown User';
     //get an integer value
     data.compatibility = +data.compatibility;
     //randomly pick pickup line from list
-    if ((PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX + 1) < PICKUP_BOT_RANDOM_MESSAGES_LIST.length) {
-        PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX++;
-    }
-    else {
-        PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX = 0;
-    }
-    var random_message = PICKUP_BOT_RANDOM_MESSAGES_LIST[PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX];
-    var the_message = 'Hi ' + data.username + '. deine Bilder sind mir positiv aufgefallen, deine Naturschönheit kommt extrem zur Geltung und dein Lächeln sieht voll süß aus😊😊. Ich würde mich freuen, wenn man sich kennenlernen könnte.';
-    the_message = 'Hi ' + data.username + '. alles gut? Dein Lächeln sieht voll süß aus😊 Kann man sich kennenlernen?';
+    var the_message = get_random_okc_message(data);
     if (okc_bot_use_random_message) {
         switch (true) {
             case (data.username.toLowerCase() == 'alexa'):
@@ -336,6 +331,15 @@ function get_message_for_okcupid_bot(data) {
         }
     }
     return the_message;
+}
+function get_random_okc_message(data) {
+    if ((PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX + 1) < PICKUP_BOT_RANDOM_MESSAGES_LIST.length) {
+        PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX++;
+    }
+    else {
+        PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX = 0;
+    }
+    return PICKUP_BOT_RANDOM_MESSAGES_LIST[PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX];
 }
 window.onload = function () {
     var reloading = sessionStorage.getItem("force-restart-okc-bot");
