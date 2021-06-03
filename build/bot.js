@@ -304,7 +304,10 @@ function get_random_okc_message(data) {
     else {
         PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX = 0;
     }
-    return PICKUP_BOT_RANDOM_MESSAGES_LIST[PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX];
+    var the_message = PICKUP_BOT_RANDOM_MESSAGES_LIST[PICKUP_BOT_RANDOM_MESSAGES_LIST_INDEX];
+    the_message = 'Hi ' + data.username + '. deine Bilder sind mir positiv aufgefallen, deine Naturschönheit kommt extrem zur Geltung und dein Lächeln sieht voll süß aus😊😊. Ich würde mich freuen, wenn man sich kennenlernen könnte.';
+    the_message = 'Hi ' + data.username + '. alles gut? Dein Lächeln sieht voll süß aus😊 Kann man sich kennenlernen?';
+    return the_message;
 }
 window.onload = function () {
     var reloading = sessionStorage.getItem("force-restart-okc-bot");
